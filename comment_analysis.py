@@ -12,8 +12,10 @@ class Counter(object) :
 # Used to recursively grab replies to comments
 def checkComments(comment,com_count):
     for comment in comment.replies:
-        print "\t"*com_count,
-        print "%s" % comment
+        if type(comment) is praw.objects.MoreComments:
+            comment.comments()
+        #print "\t"*com_count,
+        #print "%s" % comment
         checkComments(comment,com_count+1)
 
 checkComments = Counter(checkComments)
@@ -21,12 +23,19 @@ checkComments = Counter(checkComments)
 user_agent = ("comment analysis by grasbergerm - https://github.com/grasbergerm/reddit-comment-analysis")
 r = praw.Reddit(user_agent=user_agent)
 subreddit = r.get_subreddit('drunk')
-post = r.get_submission(submission_id='2j92q0')
+submission = r.get_submission(submission_id='2j92q0')
+submission.replace_more_comments(limit=None, threshold=0)
+#all_comments = submission.comments
 orig_comment = 0
-for comment in post.comments:
+for comment in submission.comments:
     orig_comment += 1
-    print "-%s\n" % comment
+    #print "-%s\n" % comment
     com_count = 0
-    print checkComments(comment,com_count)
-    print checkComments.counter - orig_comment
-print orig_comment
+    checkComments(comment,com_count)
+print "REPLIES \t",
+print "="*((checkComments.counter - orig_comment)/10)
+print "\t\t",(checkComments.counter - orig_comment)
+print "ORIGINAL\t",
+print "="*((orig_comment)/10)
+print "\t\t",(orig_comment)
+
