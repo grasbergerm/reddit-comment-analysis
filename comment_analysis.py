@@ -25,7 +25,7 @@ r = praw.Reddit(user_agent=user_agent)
 subreddit = r.get_subreddit('jeep')
 # Used for a single submission
 #submission = r.get_submission(submission_id='2j92q0')
-for submission in subreddit.get_hot(limit=10):
+for submission in subreddit.get_top_from_week(limit=10):
     submission.replace_more_comments(limit=None, threshold=0)
     #all_comments = submission.comments
     orig_comment = 0
@@ -34,12 +34,16 @@ for submission in subreddit.get_hot(limit=10):
         #print "-%s\n" % comment
         com_count = 0
         checkComments(comment,com_count)
+    if (checkComments.counter - orig_comment) <= 10 and (orig_comment <= 10):
+        scale = 1
+    else:
+        scale = 6.0
     print "%s" % submission
-    print "REPLIES \t",
-    print "="*int(round((checkComments.counter - orig_comment)/6.0))
-    print "\t",(checkComments.counter - orig_comment)
     print "ORIGINAL\t",
-    print "="*int(round((orig_comment)/6.0))
+    print "="*int(round((orig_comment)/scale))
     print "\t",(orig_comment)
+    print "REPLIES \t",
+    print "="*int(round((checkComments.counter - orig_comment)/scale))
+    print "\t",(checkComments.counter - orig_comment),"\n"
     checkComments.counter = 0
 
