@@ -22,7 +22,8 @@ checkComments = Counter(checkComments)
 
 user_agent = ("comment analysis by grasbergerm - https://github.com/grasbergerm/reddit-comment-analysis")
 r = praw.Reddit(user_agent=user_agent)
-subreddit = r.get_subreddit('jeep')
+# Get the subreddit choice
+subreddit = r.get_subreddit(raw_input("What subreddit? "))
 # Used for a single submission
 #submission = r.get_submission(submission_id='2j92q0')
 for submission in subreddit.get_top_from_week(limit=10):
